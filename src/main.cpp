@@ -9,7 +9,7 @@ struct Item
     float sy; // Scale
     float r; // Rotation
     int t; // Texture ID
-	bool selected;
+    bool selected;
 };
 
 std::vector<Item> items;
@@ -23,12 +23,12 @@ glm::mat4 v_mat;
 
 void drop_clb(GLFWwindow * win, int count, const char ** paths)
 {
-	int i, w, h;
-	for(i = 0; i < count; i ++)
-	{
-		int tex = create_texture(paths[i], w, h);
-		items.push_back({st->mx, st->my, static_cast<float>(w), static_cast<float>(h),0.0f, tex, false});
-	}
+    int i, w, h;
+    for(i = 0; i < count; i ++)
+    {
+        int tex = create_texture(paths[i], w, h);
+        items.push_back({st->mx, st->my, static_cast<float>(w), static_cast<float>(h),0.0f, tex, false});
+    }
 }
 
 void mpos_clb(GLFWwindow* win, double xpos, double ypos)
@@ -46,13 +46,13 @@ void mpos_clb(GLFWwindow* win, double xpos, double ypos)
 
 void update()
 {
-	// Panning over the world
-	if(st->keys[GLFW_MOUSE_BUTTON_MIDDLE] == K_PRESS)
-	{
+    // Panning over the world
+    if(st->keys[GLFW_MOUSE_BUTTON_MIDDLE] == K_PRESS)
+    {
         v_mat = glm::translate(v_mat, glm::vec3(st->dmx, st->dmy, 0.0f));
 
         set_uniform("v_mat", v_mat);
-	}
+    }
 
     // Deleting, key x
 
@@ -64,6 +64,7 @@ void update()
         {
             GLuint texture_id = static_cast<GLuint>(items[selected].t);
             glDeleteTextures(1, &texture_id);
+
             items.erase(items.begin()+selected);
             selected = -1;
         }
@@ -84,31 +85,31 @@ void update()
         }
     }
 
-	st->dmx = 0.0f;
-	st->dmy = 0.0f;
+    st->dmx = 0.0f;
+    st->dmy = 0.0f;
 }
 
 int main()
 {
-	GLFWwindow * window = init_engine(720, 720);
-	glCheckError();
+    GLFWwindow * window = init_engine(720, 720);
+    glCheckError();
 
-	if(window == NULL)
-		return -1;
+    if(window == NULL)
+        return -1;
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
-	// Initialize variables
-	v_mat = glm::mat4(1.0f);
+    // Initialize variables
+    v_mat = glm::mat4(1.0f);
 
-	int index = 0; 
-	while(!glfwWindowShouldClose(window))
-	{
+    int index = 0;
+    while(!glfwWindowShouldClose(window))
+    {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		for(Item & i : items)
+        for(Item & i : items)
         {
-			// Clear selection 
+            // Clear selection
             if(st->keys[GLFW_MOUSE_BUTTON_LEFT] == K_PRESS)
             {
                 if(is_hovered(i.x, i.y, i.sx, i.sy))
@@ -134,20 +135,20 @@ int main()
 
             render_quad(i.x, i.y, i.sx, i.sy, i.r,i.t, i.selected); 
 
-			index++;
+            index++;
         }
 
-		index = 0;
+        index = 0;
 
-		update();
+        update();
 
-		// glCheckError();
+        // glCheckError();
         glfwSwapBuffers(window);
         glfwPollEvents();
-	}
+    }
 
-	glfwTerminate();
-	on_exit();
+    glfwTerminate();
+    on_exit();
 
 }
 
